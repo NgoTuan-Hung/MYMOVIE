@@ -1,0 +1,17 @@
+spring:
+    datasource:
+        url: jdbc:postgresql://localhost:5432/mymovie
+        username: postgres
+        password: 6242814l
+
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+
+    servlet:
+        multipart:
+            max-file-size: 5MB
+            max-request-size: 5MB
+            
+        

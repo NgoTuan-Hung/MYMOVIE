@@ -1,0 +1,66 @@
+COMPACT DATABASE REPRESENTATION
+=====================================
+
+ENTITIES (7 tables):
+
+1. USER (app_user)
+   - id: Integer (PK, auto-increment)
+   - name: String
+   - Relationships: 1:N with UserMovie
+
+2. MOVIE
+   - id: Integer (PK, auto-increment)
+   - originalName: String
+   - displayName: String
+   - releaseYear: Integer
+   - duration: Integer
+   - status: MovieStatus (enum)
+   - episodeCount: Integer (default: 1)
+   - Relationships: N:M with Country, Category, Actor, Director, Language; 1:N with UserMovie
+   - posterPath: String
+
+3. USER_MOVIE
+   - id: Integer (PK, auto-increment)
+   - rating: Integer
+   - review: String
+   - Constraints: Unique (user_id, movie_id)
+   - Relationships: N:1 with User, N:1 with Movie
+
+4. ACTOR
+   - id: Integer (PK, auto-increment)
+   - name: String
+   - Relationships: N:M with Movie
+
+5. DIRECTOR
+   - id: Integer (PK, auto-increment)
+   - name: String
+   - Relationships: N:M with Movie
+
+6. CATEGORY
+   - id: Integer (PK, auto-increment)
+   - name: String
+   - Relationships: N:M with Movie
+
+7. COUNTRY
+   - id: Integer (PK, auto-increment)
+   - name: String
+   - Relationships: N:M with Movie
+
+8. LANGUAGE
+   - id: Integer (PK, auto-increment)
+   - name: String
+   - Relationships: N:M with Movie
+
+RELATIONSHIP TABLES (5 junction tables):
+- movie_country (movie_id, country_id)
+- movie_category (movie_id, category_id)
+- movie_actor (movie_id, actor_id)
+- movie_director (movie_id, director_id)
+- movie_language (movie_id, language_id)
+
+KEY FEATURES:
+- Movie entity is central with multiple many-to-many relationships
+- User can rate and review movies through UserMovie junction table
+- Support for multiple countries, categories, actors, directors, and languages per movie
+- Unique constraint prevents duplicate user-movie relationships
+- Enum-based status field for movie status tracking
