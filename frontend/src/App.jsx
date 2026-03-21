@@ -1,14 +1,20 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MovieList from "./test/MovieList";
+import NavigationBar from "./components/NavigationBar";
+import HomePage from "./test/HomePage";
 import MovieDetail from "./test/MovieDetail";
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MovieList />} />
-        <Route path="/movie/:id" element={<MovieDetail />} />
-      </Routes>
+      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+        <NavigationBar />
+        <main style={{ flex: 1, padding: "20px" }}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/movie/:id" element={<MovieDetail />} />
+          </Routes>
+        </main>
+      </div>
     </BrowserRouter>
   )
 }

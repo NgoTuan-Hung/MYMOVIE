@@ -3,8 +3,11 @@ package com.example.mymovie.Service;
 import java.util.HashSet;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 
+import com.example.mymovie.DTO.DetailMovieResponse;
 import com.example.mymovie.DTO.MovieResponse;
 import com.example.mymovie.Entity.Actor;
 import com.example.mymovie.Entity.Category;
@@ -53,5 +56,14 @@ public class MyMovieService implements MovieService {
     public List<MovieResponse> getAllMovies() {
         System.out.println("getAllMovies");
         return movieRepository.getAllMovies();
+    }
+
+    public List<MovieResponse> getHotMovies(int limit) {
+        return movieRepository.getHotMovies(PageRequest.of(0, limit));
+    }
+
+    public DetailMovieResponse getMovieById(Long id) {
+        return movieRepository.findById(id).map(DetailMovieResponse::new)
+                .orElseThrow(() -> new RuntimeException("Movie not found"));
     }
 }

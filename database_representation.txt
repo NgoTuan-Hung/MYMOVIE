@@ -18,6 +18,7 @@ ENTITIES (7 tables):
    - episodeCount: Integer (default: 1)
    - Relationships: N:M with Country, Category, Actor, Director, Language; 1:N with UserMovie
    - posterPath: String
+   - weeklyViews: Integer
 
 3. USER_MOVIE
    - id: Integer (PK, auto-increment)

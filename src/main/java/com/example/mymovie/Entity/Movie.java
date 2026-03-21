@@ -55,4 +55,5 @@ public class Movie {
 
     // getters, setters
     private String posterPath;
+    private Integer weeklyViews;
 }

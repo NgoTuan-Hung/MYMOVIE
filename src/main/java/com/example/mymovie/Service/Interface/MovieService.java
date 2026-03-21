@@ -2,6 +2,7 @@ package com.example.mymovie.Service.Interface;
 
 import java.util.List;
 
+import com.example.mymovie.DTO.DetailMovieResponse;
 import com.example.mymovie.DTO.MovieResponse;
 import com.example.mymovie.Entity.Actor;
 import com.example.mymovie.Entity.Category;
