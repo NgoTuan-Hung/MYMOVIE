@@ -4,7 +4,7 @@ import "../styles/navbar.css";
 
 const navItems = [
     { label: "Home", path: "/" },
-    { label: "Movies", path: "/movies" },
+    { label: "Movies", path: "/movie" },
     { label: "TV Shows", path: "/tv" },
     { label: "Genres", path: "/genres" },
 ];

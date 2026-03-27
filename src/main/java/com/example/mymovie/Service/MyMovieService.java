@@ -3,11 +3,15 @@ package com.example.mymovie.Service;
 import java.util.HashSet;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 
 import com.example.mymovie.DTO.DetailMovieResponse;
+import com.example.mymovie.DTO.MovieFilterRequest;
 import com.example.mymovie.DTO.MovieResponse;
 import com.example.mymovie.Entity.Actor;
 import com.example.mymovie.Entity.Category;
@@ -18,6 +22,7 @@ import com.example.mymovie.Entity.Movie;
 import com.example.mymovie.Enum.MovieStatus;
 import com.example.mymovie.Repository.MovieRepository;
 import com.example.mymovie.Service.Interface.MovieService;
+import com.example.mymovie.Specification.MovieSpecification;
 
 import lombok.RequiredArgsConstructor;
 
@@ -65,5 +70,32 @@ public class MyMovieService implements MovieService {
     public DetailMovieResponse getMovieById(Long id) {
         return movieRepository.findById(id).map(DetailMovieResponse::new)
                 .orElseThrow(() -> new RuntimeException("Movie not found"));
+    }
+
+    public MovieResponse ToResponse(Movie movie) {
+        return new MovieResponse(
+                movie.getId(),
+                movie.getDisplayName(),
+                movie.getReleaseYear(),
+                movie.getDuration(),
+                movie.getStatus(),
+                movie.getEpisodeCount(),
+                movie.getPosterPath());
+    }
+
+    public Page<MovieResponse> getMovieByFilter(MovieFilterRequest req, int page, int limit) {
+        Sort sort = Sort.unsorted();
+
+        if (req.getSort() == "name") {
+            sort = Sort.by("displayName").ascending();
+        } else if (req.getSort() == "viewCount") {
+            sort = Sort.by("weeklyViews").descending();
+        }
+
+        Pageable pageable = PageRequest.of(page, limit, sort);
+
+        var movies = movieRepository.findAll(MovieSpecification.filter(req), pageable);
+
+        return movies.map(this::ToResponse);
     }
 }

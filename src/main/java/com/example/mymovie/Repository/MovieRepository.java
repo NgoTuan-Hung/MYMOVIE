@@ -6,12 +6,13 @@ import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import com.example.mymovie.DTO.MovieResponse;
 import com.example.mymovie.Entity.Movie;
 
-public interface MovieRepository extends JpaRepository<Movie, Long> {
+public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecificationExecutor<Movie> {
     @Query("""
                SELECT new com.example.mymovie.DTO.MovieResponse(
                m.id,m.displayName,m.releaseYear,m.duration,m.status,m.episodeCount,m.posterPath
