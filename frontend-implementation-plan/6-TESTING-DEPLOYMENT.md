@@ -2,570 +2,172 @@
 
 ## Overview
 
-This document outlines the comprehensive testing strategy and deployment plan for the movie filter page implementation. The plan covers unit testing, integration testing, end-to-end testing, and deployment procedures.
+Simple, practical testing for the two filter pages. No complex frameworks or CI/CD pipelines - just straightforward manual testing and basic verification.
 
 ## Testing Strategy
 
-### 1. Unit Testing
+### 1. Manual Testing (Primary Method)
 
-#### Component Testing
-**Framework**: Jest + React Testing Library
+This is the main testing approach. Run the app and test in the browser.
 
-**Test Files Structure**:
-```
-frontend/src/__tests__/
-├── components/
-│   ├── FilterPage.test.js
-│   ├── FilterControls.test.js
-│   ├── MovieGrid.test.js
-│   ├── MovieCard.test.js
-│   └── Pagination.test.js
-├── hooks/
-│   ├── useMovieFilter.test.js
-│   ├── useFilterParams.test.js
-│   └── useFilterOptions.test.js
-└── services/
-    └── movieApi.test.js
-```
-
-#### Example Component Tests
-
-**File**: `frontend/src/__tests__/components/FilterControls.test.js`
-
-```javascript
-import { render, screen, fireEvent } from '@testing-library/react';
-import FilterControls from '../../components/FilterControls';
-
-describe('FilterControls', () => {
-  const mockOnFilterChange = jest.fn();
-  const mockOnApplyFilters = jest.fn();
-
-  const defaultProps = {
-    filters: {
-      sort: '',
-      category: '',
-      country: '',
-      releaseYear: '',
-      type: ''
-    },
-    onFilterChange: mockOnFilterChange,
-    onApplyFilters: mockOnApplyFilters,
-    loading: false
-  };
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  test('renders all filter dropdowns', () => {
-    render(<FilterControls {...defaultProps} />);
-    
-    expect(screen.getByLabelText(/sort/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/category/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/country/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/release year/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/type/i)).toBeInTheDocument();
-  });
-
-  test('calls onFilterChange when dropdown value changes', () => {
-    render(<FilterControls {...defaultProps} />);
-    
-    const sortSelect = screen.getByLabelText(/sort/i);
-    fireEvent.change(sortSelect, { target: { value: 'name' } });
-    
-    expect(mockOnFilterChange).toHaveBeenCalledWith('sort', 'name');
-  });
-
-  test('disables filter button when loading', () => {
-    render(<FilterControls {...defaultProps} loading={true} />);
-    
-    const filterButton = screen.getByRole('button', { name: /filter/i });
-    expect(filterButton).toBeDisabled();
-  });
-});
-```
-
-#### Hook Testing
-
-**File**: `frontend/src/__tests__/hooks/useMovieFilter.test.js`
-
-```javascript
-import { renderHook, act } from '@testing-library/react';
-import { useMovieFilter } from '../../hooks/useMovieFilter';
-
-// Mock the API
-jest.mock('../../services/movieApi', () => ({
-  movieApi: {
-    fetchMoviesByFilter: jest.fn()
-  }
-}));
-
-describe('useMovieFilter', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  test('initializes with correct default state', () => {
-    const { result } = renderHook(() => useMovieFilter());
-    
-    expect(result.current.filters).toEqual({
-      sort: '',
-      category: '',
-      country: '',
-      releaseYear: '',
-      type: ''
-    });
-    expect(result.current.loading).toBe(false);
-    expect(result.current.movies).toEqual([]);
-  });
-
-  test('updates filter when updateFilter is called', () => {
-    const { result } = renderHook(() => useMovieFilter());
-    
-    act(() => {
-      result.current.updateFilter('sort', 'name');
-    });
-    
-    expect(result.current.filters.sort).toBe('name');
-  });
-
-  test('resets filters when resetFilters is called', () => {
-    const { result } = renderHook(() => useMovieFilter({ type: 'movie' }));
-    
-    act(() => {
-      result.current.updateFilter('sort', 'name');
-      result.current.updateFilter('category', 'Action');
-    });
-    
-    act(() => {
-      result.current.resetFilters();
-    });
-    
-    expect(result.current.filters).toEqual({
-      sort: '',
-      category: '',
-      country: '',
-      releaseYear: '',
-      type: 'movie' // Should preserve type from initial
-    });
-  });
-});
-```
-
-### 2. Integration Testing
-
-#### API Integration Tests
-
-**File**: `frontend/src/__tests__/services/movieApi.test.js`
-
-```javascript
-import { movieApi } from '../../services/movieApi';
-
-// Mock fetch
-global.fetch = jest.fn();
-
-describe('movieApi', () => {
-  beforeEach(() => {
-    fetch.mockClear();
-  });
-
-  describe('fetchMoviesByFilter', () => {
-    test('calls correct endpoint with filter parameters', async () => {
-      const mockResponse = {
-        content: [],
-        totalPages: 0,
-        totalElements: 0,
-        number: 0
-      };
-      
-      fetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve(mockResponse)
-      });
-
-      const filters = {
-        sort: 'name',
-        category: 'Action',
-        country: 'US',
-        releaseYear: '2023',
-        type: 'movie'
-      };
-
-      const result = await movieApi.fetchMoviesByFilter(filters, 0, 10);
-
-      expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:8080/movie/filter?page=0&limit=10&sort=name&category=Action&country=US&releaseYear=2023&type=movie'
-      );
-      expect(result).toEqual(mockResponse);
-    });
-
-    test('throws error for failed requests', async () => {
-      fetch.mockResolvedValueOnce({
-        ok: false,
-        status: 500
-      });
-
-      await expect(movieApi.fetchMoviesByFilter({})).rejects.toThrow('HTTP error! status: 500');
-    });
-  });
-});
-```
-
-### 3. End-to-End Testing
-
-#### E2E Test Structure
-**Framework**: Cypress
-
-**Test Files**:
-```
-cypress/
-├── e2e/
-│   ├── filter-page.cy.js
-│   ├── filter-functionality.cy.js
-│   └── pagination.cy.js
-├── fixtures/
-│   └── movies.json
-└── support/
-    ├── commands.js
-    └── e2e.js
-```
-
-#### Example E2E Tests
-
-**File**: `cypress/e2e/filter-page.cy.js`
-
-```javascript
-describe('Filter Page E2E', () => {
-  beforeEach(() => {
-    // Seed database or mock API responses
-    cy.intercept('GET', '/movie/filter*', { fixture: 'movies.json' }).as('getMovies');
-    cy.visit('/filter?type=movies');
-  });
-
-  it('loads filter page with correct initial state', () => {
-    cy.wait('@getMovies');
-    cy.get('[data-testid="filter-controls"]').should('be.visible');
-    cy.get('[data-testid="movie-grid"]').should('be.visible');
-    cy.get('[data-testid="pagination"]').should('be.visible');
-  });
-
-  it('applies filters and updates URL', () => {
-    // Select sort option
-    cy.get('[data-testid="sort-select"]').select('name');
-    
-    // Select category
-    cy.get('[data-testid="category-select"]').select('Action');
-    
-    // Click filter button
-    cy.get('[data-testid="apply-filters-btn"]').click();
-    
-    // Verify URL updated
-    cy.url().should('include', 'sort=name');
-    cy.url().should('include', 'category=Action');
-    
-    // Verify API called with correct parameters
-    cy.wait('@getMovies').then((interception) => {
-      expect(interception.request.url).to.include('sort=name');
-      expect(interception.request.url).to.include('category=Action');
-    });
-  });
-
-  it('handles pagination correctly', () => {
-    cy.get('[data-testid="page-button"]').contains('2').click();
-    cy.url().should('include', 'page=1');
-    cy.wait('@getMovies');
-  });
-
-  it('displays error state for failed requests', () => {
-    cy.intercept('GET', '/movie/filter*', { statusCode: 500 }).as('getMoviesError');
-    cy.visit('/filter?type=movies');
-    cy.wait('@getMoviesError');
-    cy.get('[data-testid="error-message"]').should('be.visible');
-  });
-});
-```
-
-### 4. Visual Regression Testing
-
-#### Storybook Integration
-**Purpose**: Component documentation and visual testing
-
-**File**: `frontend/src/stories/FilterPage.stories.js`
-
-```javascript
-import FilterPage from '../components/FilterPage';
-
-export default {
-  title: 'Pages/FilterPage',
-  component: FilterPage,
-};
-
-const Template = (args) => <FilterPage {...args} />;
-
-export const Default = Template.bind({});
-Default.args = {
-  type: 'movies'
-};
-
-export const WithFilters = Template.bind({});
-WithFilters.args = {
-  type: 'series',
-  initialFilters: {
-    sort: 'viewCount',
-    category: 'Action',
-    country: 'US'
-  }
-};
-
-export const Loading = Template.bind({});
-Loading.args = {
-  type: 'movies',
-  loading: true
-};
-
-export const Error = Template.bind({});
-Error.args = {
-  type: 'movies',
-  error: 'Failed to load movies'
-};
-```
-
-## Performance Testing
-
-### 1. Load Testing
-- Test with 100+ movies in grid
-- Verify pagination performance
-- Test filter response times
-
-### 2. Bundle Size Analysis
-- Monitor JavaScript bundle size
-- Optimize image loading
-- Implement code splitting
-
-### 3. Accessibility Testing
-- Run axe-core accessibility tests
-- Test keyboard navigation
-- Verify screen reader compatibility
-
-## Deployment Strategy
-
-### 1. Development Environment
-
-#### Local Development Setup
+#### Prerequisites
 ```bash
-# Install dependencies
-npm install
+# Terminal 1: Start backend
+cd c:\Users\ADMIN88\Desktop\temp\Project Files\java\mymovie
+mvnw spring-boot:run
 
-# Start development server
+# Terminal 2: Start frontend
+cd c:\Users\ADMIN88\Desktop\temp\Project Files\java\mymovie\frontend
 npm run dev
-
-# Run tests
-npm test
-
-# Run E2E tests
-npm run cypress:open
 ```
 
-#### Environment Variables
-```env
-# .env.development
-VITE_API_BASE_URL=http://localhost:8080
-VITE_ENABLE_MOCK_API=false
-VITE_DEBUG_MODE=true
-```
+#### Test Checklist
 
-### 2. Build Configuration
+**Test 1: Movies Page Loads**
+1. Open browser to `http://localhost:5173/movie`
+2. Verify page title shows "Movies"
+3. Verify movie grid displays results
+4. Verify pagination shows at bottom
 
-#### Vite Configuration
-**File**: `frontend/vite.config.js`
+**Test 2: TV Shows Page Loads**
+1. Open browser to `http://localhost:5173/tv`
+2. Verify page title shows "TV Shows"
+3. Verify TV shows grid displays results
+4. Verify pagination shows at bottom
+
+**Test 3: Filter by Sort**
+1. Go to `/movie`
+2. Change sort dropdown to "Name (A-Z)"
+3. Verify results are sorted by name
+4. Change sort to "Most Popular"
+5. Verify results are sorted by view count
+
+**Test 4: Filter by Category**
+1. Go to `/movie`
+2. Select a category (e.g., "Action")
+3. Verify only Action movies are shown
+4. Clear the category filter
+5. Verify all movies are shown again
+
+**Test 5: Filter by Country**
+1. Go to `/movie`
+2. Select a country (e.g., "US")
+3. Verify only US movies are shown
+
+**Test 6: Filter by Release Year**
+1. Go to `/movie`
+2. Select a year (e.g., "2024")
+3. Verify only 2024 movies are shown
+
+**Test 7: Pagination**
+1. Go to `/movie`
+2. Click "Next" or page "2"
+3. Verify different results are shown
+4. Click "Previous"
+5. Verify first page results return
+
+**Test 8: Reset Filters**
+1. Apply multiple filters (sort, category, country)
+2. Click "Reset" button
+3. Verify all filters are cleared
+4. Verify results return to default
+
+**Test 9: Navigation Between Pages**
+1. Go to `/movie`
+2. Click "TV Shows" in navigation
+3. Verify URL changes to `/tv`
+4. Verify TV shows are displayed
+5. Click "Movies" in navigation
+6. Verify URL changes to `/movie`
+
+**Test 10: Error Handling**
+1. Stop the backend server
+2. Refresh `/movie` page
+3. Verify error message is displayed
+4. Restart backend and verify retry works
+
+**Test 11: Responsive Design**
+1. Open browser DevTools (F12)
+2. Toggle device toolbar
+3. Test on mobile view (375px width)
+4. Test on tablet view (768px width)
+5. Test on desktop view (1280px width)
+6. Verify grid adjusts correctly (1 → 2 → 3 → 4 → 5 columns)
+
+**Test 12: Loading State**
+1. In DevTools Network tab, set "Slow 3G" throttling
+2. Refresh `/movie` page
+3. Verify loading spinner appears
+4. Verify results load after delay
+
+### 2. Quick Console Test (API Verification)
+
+Open browser console on `/movie` page and run:
 
 ```javascript
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
+// Test API call directly
+fetch('http://localhost:8080/movie/filter?type=movie&page=0&limit=10')
+  .then(res => res.json())
+  .then(data => console.log('Movies:', data))
+  .catch(err => console.error('Error:', err));
 
-export default defineConfig({
-  plugins: [react()],
-  build: {
-    outDir: 'dist',
-    sourcemap: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          utils: ['lodash', 'date-fns']
-        }
-      }
-    }
-  },
-  server: {
-    port: 3000,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8080',
-        changeOrigin: true
-      }
-    }
-  }
-});
+// Test TV shows API call
+fetch('http://localhost:8080/movie/filter?type=series&page=0&limit=10')
+  .then(res => res.json())
+  .then(data => console.log('TV Shows:', data))
+  .catch(err => console.error('Error:', err));
 ```
 
-### 3. Production Deployment
+Expected: Both should return paginated results with `content` array.
 
-#### Build Process
+### 3. Visual Check
+
+Verify these visual elements:
+- [ ] Navigation bar shows current page highlight
+- [ ] Filter dropdowns are aligned horizontally
+- [ ] Movie cards show poster, title, year
+- [ ] Pagination is centered at bottom
+- [ ] Hover effects work on movie cards
+- [ ] Loading spinner appears during fetch
+
+## Deployment
+
+### Build for Production
+
 ```bash
-# Build for production
+cd frontend
 npm run build
+```
 
-# Preview build
+Output will be in `frontend/dist/` folder.
+
+### Serve Production Build
+
+```bash
+cd frontend
 npm run preview
-
-# Deploy to server
-scp -r dist/* user@server:/var/www/mymovie/
 ```
 
-#### Docker Configuration
-**File**: `frontend/Dockerfile`
+This serves the built files locally for verification.
 
-```dockerfile
-# Build stage
-FROM node:18-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
+### Deploy to Server
 
-# Production stage
-FROM nginx:alpine
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-```
+Copy `frontend/dist/` contents to your web server's public folder.
 
-#### Nginx Configuration
-**File**: `frontend/nginx.conf`
+## Common Issues and Fixes
 
-```nginx
-server {
-    listen 80;
-    server_name mymovie.example.com;
-    root /usr/share/nginx/html;
-    index index.html;
-
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    location /api {
-        proxy_pass http://backend:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-
-    # Security headers
-    add_header X-Frame-Options "SAMEORIGIN" always;
-    add_header X-XSS-Protection "1; mode=block" always;
-    add_header X-Content-Type-Options "nosniff" always;
-}
-```
-
-### 4. CI/CD Pipeline
-
-#### GitHub Actions Workflow
-**File**: `.github/workflows/deploy.yml`
-
-```yaml
-name: Deploy Filter Page
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-    
-    - run: npm ci
-    - run: npm run lint
-    - run: npm run test -- --coverage
-    - run: npm run build
-
-  e2e:
-    runs-on: ubuntu-latest
-    needs: test
-    
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-    
-    - run: npm ci
-    - run: npm run build
-    - run: npm run cypress:run
-      env:
-        CYPRESS_baseUrl: https://staging.mymovie.com
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [test, e2e]
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - uses: actions/checkout@v3
-    - uses: docker/build-push-action@v4
-      with:
-        context: ./frontend
-        push: true
-        tags: mymovie/filter-page:latest
-```
-
-### 5. Monitoring and Analytics
-
-#### Error Tracking
-- Integrate error tracking (Sentry, LogRocket)
-- Monitor API response times
-- Track user interactions
-
-#### Performance Monitoring
-- Page load times
-- Filter response times
-- Bundle size tracking
-
-## Rollback Strategy
-
-### 1. Blue-Green Deployment
-- Deploy to staging environment first
-- Test thoroughly before production
-- Quick rollback to previous version if issues
-
-### 2. Feature Flags
-- Implement feature flags for new functionality
-- Gradual rollout to users
-- Easy disable if problems occur
+| Issue | Fix |
+|-------|-----|
+| CORS error | Add `@CrossOrigin` to backend controller |
+| Blank page | Check console for errors, verify API URL |
+| No results | Check backend is running, verify database has data |
+| Filters not working | Check Network tab for API call parameters |
+| Images not loading | Verify `getPosterUrl` returns correct URL |
 
 ## Next Steps
 
-The implementation plan is now complete. Proceed with the actual implementation following the detailed plans in each document:
-
-1. [1-OVERVIEW.md](./1-OVERVIEW.md) - Project overview and goals
-2. [2-COMPONENT-STRUCTURE.md](./2-COMPONENT-STRUCTURE.md) - Component architecture
-3. [3-API-INTEGRATION.md](./3-API-INTEGRATION.md) - API integration strategy
-4. [4-STYLING-LAYOUT.md](./4-STYLING-LAYOUT.md) - Styling and layout plan
-5. [5-STATE-MANAGEMENT.md](./5-STATE-MANAGEMENT.md) - State management strategy
-6. [6-TESTING-DEPLOYMENT.md](./6-TESTING-DEPLOYMENT.md) - Testing and deployment plan
-
-Each document provides detailed implementation guidance for building a robust, scalable, and user-friendly movie filter page.
+After testing is complete:
+1. Review all test checklist items
+2. Fix any issues found
+3. Build for production
+4. Deploy to server

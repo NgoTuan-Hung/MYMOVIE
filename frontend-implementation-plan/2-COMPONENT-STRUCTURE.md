@@ -2,18 +2,33 @@
 
 ## Overview
 
-This document details the component architecture for the movie filter page implementation. The design follows React best practices with separation of concerns and reusability.
+This document details the component architecture for the TWO filter pages implementation. Both pages share the same components but with different default type parameters.
+
+## Two Filter Pages
+
+### Page 1: Movies Filter Page
+- **Route**: `/movie`
+- **Component**: `MovieFilterPage` with `defaultType="movie"`
+- **Purpose**: Filter and browse movies (episodeCount < 2)
+
+### Page 2: TV Shows Filter Page
+- **Route**: `/tv`
+- **Component**: `MovieFilterPage` with `defaultType="series"`
+- **Purpose**: Filter and browse TV shows/series (episodeCount > 1)
 
 ## Component Hierarchy
 
 ```
-FilterPage (Main Container)
+App.jsx
+├── Route: /movie → MovieFilterPage(defaultType="movie")
+└── Route: /tv → MovieFilterPage(defaultType="series")
+
+MovieFilterPage (Main Container - reused for both pages)
 ├── FilterControls (Filter Controls Section)
 │   ├── SortDropdown
 │   ├── CategoryDropdown
 │   ├── CountryDropdown
 │   ├── ReleaseYearDropdown
-│   ├── TypeDropdown
 │   └── FilterButton
 ├── MovieGrid (Content Display)
 │   └── MovieCard (Individual Movie Item)
@@ -22,11 +37,18 @@ FilterPage (Main Container)
 
 ## Component Breakdown
 
-### 1. FilterPage.jsx (Main Container)
+### 1. MovieFilterPage.jsx (Main Container - Reused for both pages)
 
-**Purpose**: Main container component that orchestrates the filter page functionality
+**Purpose**: Main container component that orchestrates the filter page functionality. This single component is used for BOTH `/movie` and `/tv` routes.
 
-**Props**: None (uses URL parameters via React Router)
+**Props**:
+- `defaultType`: `"movie"` or `"series"` - determines the default type filter
+
+**Usage in App.jsx**:
+```jsx
+<Route path="/movie" element={<MovieFilterPage defaultType="movie" />} />
+<Route path="/tv" element={<MovieFilterPage defaultType="series" />} />
+```
 
 **State Management**:
 - Filter parameters (sort, category, country, releaseYear, type)
@@ -36,7 +58,7 @@ FilterPage (Main Container)
 - Movie data
 
 **Key Functions**:
-- Initialize filters from URL parameters
+- Initialize filters from URL parameters and defaultType prop
 - Handle filter changes
 - Fetch movies from API
 - Manage pagination
@@ -46,6 +68,10 @@ FilterPage (Main Container)
 - GET `/movie/filter` with query parameters
 - Support for pagination (page, limit)
 - Error handling for failed requests
+
+**Page Titles**:
+- When `defaultType="movie"`: Display "Movies"
+- When `defaultType="series"`: Display "TV Shows"
 
 ### 2. FilterControls.jsx
 

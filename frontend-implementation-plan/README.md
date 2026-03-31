@@ -1,39 +1,44 @@
-# Frontend Filter Page Implementation Plan
+# Frontend Filter Pages Implementation Plan
 
-## 📋 Summary
+## Summary
 
-This implementation plan provides a complete roadmap for building a dynamic movie filtering page for the MyMovie application. The plan covers all aspects of development from component architecture to deployment.
+This implementation plan provides a complete roadmap for building **TWO dynamic movie filtering pages** for the MyMovie application:
 
-## 🎯 Project Goals
+1. **Movies Filter Page** (`/movie`) - Filter and browse movies
+2. **TV Shows Filter Page** (`/tv`) - Filter and browse TV shows/series
 
-- Create a unified filter page for both movies and TV shows
-- Implement responsive filter controls (Sort, Category, Country, Release Year, Type)
-- Build a movie grid displaying 10 movies per page with pagination
-- Integrate with existing backend API endpoints
+Both pages share the same components but use different default `type` parameters.
+
+## Project Goals
+
+- Create TWO filter pages: `/movie` for movies, `/tv` for TV shows
+- Implement responsive filter controls (Sort, Category, Country, Release Year)
+- Build a movie grid displaying 10 items per page with pagination
+- Integrate with existing backend API endpoint (`GET /movie/filter`)
 - Ensure mobile-friendly responsive design
 
-## 📁 Plan Structure
+## Plan Structure
 
 The implementation plan is organized into 6 detailed documents:
 
 ### 1. [1-OVERVIEW.md](./1-OVERVIEW.md) - Project Overview
-- Current state analysis
+- Current state analysis (existing frontend and backend)
+- Two filter pages architecture
 - Technical requirements
 - Implementation phases
 - File structure plan
 
 ### 2. [2-COMPONENT-STRUCTURE.md](./2-COMPONENT-STRUCTURE.md) - Component Architecture
-- Component hierarchy
-- Data flow diagram
-- State management strategy
-- Performance considerations
+- Two filter pages: `/movie` and `/tv`
+- Component hierarchy (shared components)
+- MovieFilterPage component (reused with different `defaultType` props)
+- FilterControls, MovieGrid, MovieCard, Pagination components
 
 ### 3. [3-API-INTEGRATION.md](./3-API-INTEGRATION.md) - API Integration
-- Backend API analysis
-- Enhanced API utility functions
-- Custom hooks for filter logic
-- URL parameter integration
-- Backend fixes required
+- Backend API analysis (`GET /movie/filter`)
+- Extend existing `myMovieApi.js` with filter function
+- Custom hook `useMovieFilter` for filter logic
+- Static filter options for dropdowns
 
 ### 4. [4-STYLING-LAYOUT.md](./4-STYLING-LAYOUT.md) - Styling and Layout
 - Design system (colors, typography, spacing)
@@ -42,170 +47,115 @@ The implementation plan is organized into 6 detailed documents:
 - Animation and interaction design
 
 ### 5. [5-STATE-MANAGEMENT.md](./5-STATE-MANAGEMENT.md) - State Management
-- State architecture and structure
-- Custom hooks implementation
-- Performance optimization strategies
-- Error handling and recovery
-- State persistence
+- State architecture for both pages
+- `useMovieFilter` hook implementation
+- Filter options from static constants
+- Simple error handling and loading states
 
 ### 6. [6-TESTING-DEPLOYMENT.md](./6-TESTING-DEPLOYMENT.md) - Testing and Deployment
-- Unit testing strategy
-- Integration testing approach
-- End-to-end testing with Cypress
-- Performance and accessibility testing
-- Deployment pipeline and monitoring
+- **Simple manual testing** - no complex frameworks
+- 12-point test checklist
+- Quick console API verification
+- Common issues and fixes
+- Build and deployment steps
 
-## 🔧 Key Technical Features
+### 7. [7-COMPONENT-CODE.md](./7-COMPONENT-CODE.md) - Actual Component Code
+- **Complete code for all JSX components** - copy and paste ready
+- App.jsx updates with new routes
+- NavigationBar.jsx fix
+- MovieFilterPage.jsx (main container)
+- FilterControls.jsx (dropdowns)
+- MovieGrid.jsx (grid layout)
+- MovieCard.jsx (individual cards)
+- Pagination.jsx (page navigation)
+- useMovieFilter.js hook
+- myMovieApi.js extensions
+- All CSS files with responsive design
 
-### Frontend Architecture
-- **React 18** with functional components
-- **React Router** for navigation and URL parameters
-- **Custom hooks** for state management and API integration
-- **CSS-in-JS** with design tokens for consistent styling
+## Key Technical Features
+
+### Two Filter Pages
+| Page | Route | Default Type |
+|------|-------|--------------|
+| Movies | `/movie` | `type=movie` |
+| TV Shows | `/tv` | `type=series` |
+
+### Shared Components
+- `MovieFilterPage` - Main container (used for both routes)
+- `FilterControls` - Filter dropdowns
+- `MovieGrid` - Responsive grid layout
+- `MovieCard` - Individual item display
+- `Pagination` - Page navigation
 
 ### API Integration
-- **Filter endpoint**: `GET /movie/filter` with query parameters
-- **Pagination support**: Page-based navigation with 10 items per page
-- **Debounced filtering**: 300ms delay to prevent excessive API calls
-- **Error handling**: Network failures and validation errors
+- Single endpoint: `GET /movie/filter`
+- Query parameters: sort, category, country, releaseYear, type, page, limit
+- Pagination: 10 items per page
 
-### User Experience
-- **Responsive design**: Mobile-first approach with 5 breakpoints
-- **Loading states**: Skeleton loaders and spinners
-- **Error states**: User-friendly error messages with retry functionality
-- **Accessibility**: Keyboard navigation and screen reader support
+### State Management
+- Custom hook: `useMovieFilter(defaultType)`
+- Static filter options from `FILTER_OPTIONS`
+- Simple error and loading states
 
-## 🚀 Implementation Phases
+## Implementation Phases
 
 ### Phase 1: Foundation Setup
-- Create component structure
-- Set up routing for filter pages
-- Implement basic state management
+- Create `components/filter/` folder
+- Create `hooks/` folder
+- Update `App.jsx` with `/movie` and `/tv` routes
+- Fix `NavigationBar.jsx` (missing `useNavigate`)
 
-### Phase 2: Filter Controls
-- Build dropdown components
-- Implement filter state management
-- Create filter submission logic
+### Phase 2: Core Components
+- Create `MovieFilterPage.jsx`
+- Create `FilterControls.jsx`
+- Create `MovieGrid.jsx`
+- Create `MovieCard.jsx`
+- Create `Pagination.jsx`
 
-### Phase 3: Movie Grid and Pagination
-- Create movie card component
-- Implement responsive grid layout
-- Add pagination controls
+### Phase 3: State Management & API
+- Create `useMovieFilter.js` hook
+- Extend `myMovieApi.js` with filter function
+- Connect components to API
 
-### Phase 4: Integration and Polish
-- Connect to backend API
-- Implement URL parameter handling
-- Add responsive design improvements
-- Error handling and edge cases
+### Phase 4: Styling
+- Create CSS files for components
+- Implement responsive design
+- Add loading states and animations
 
-## 📊 Backend Requirements
+### Phase 5: Testing
+- Manual testing using test checklist
+- Verify both pages work correctly
+- Test responsive design
+- Test error handling
+
+## Backend Requirements
 
 ### Current Status
 - ✅ Filter endpoint implemented (`/movie/filter`)
-- ✅ MovieFilterRequest DTO
+- ✅ Country parameter uses `@RequestParam` (correct)
+- ✅ MovieFilterRequest DTO exists
 - ✅ MovieSpecification for database queries
-- ⚠️ Country parameter needs fix (currently @RequestBody)
 
-### Required Backend Fixes
-1. Change country parameter from `@RequestBody` to `@RequestParam`
-2. Add filter options endpoint (`/movie/filter/options`)
-3. Ensure type parameter handles "movies" and "series" correctly
+### No Backend Changes Required
+The existing backend already supports the filter functionality. The frontend will use the existing `GET /movie/filter` endpoint.
 
-## 🧪 Testing Strategy
+## Testing Strategy
 
-### Unit Testing
-- Component rendering and interaction tests
-- Hook functionality tests
-- API service tests
+**Simple manual testing** - no Cypress, no Jest, no complex setups:
 
-### Integration Testing
-- API endpoint integration
-- State management flow tests
-- URL parameter handling
+1. Start backend and frontend
+2. Open browser to `/movie` and `/tv`
+3. Test filters, pagination, responsive design
+4. Verify error handling
+5. Check visual elements
 
-### End-to-End Testing
-- Complete user workflows
-- Filter functionality testing
-- Pagination testing
-- Error scenario testing
+See [6-TESTING-DEPLOYMENT.md](./6-TESTING-DEPLOYMENT.md) for the complete test checklist.
 
-## 🚀 Deployment
-
-### Development Environment
-- Local development with hot reloading
-- Environment variable configuration
-- Proxy setup for API calls
-
-### Production Deployment
-- Docker containerization
-- Nginx configuration
-- CI/CD pipeline with GitHub Actions
-- Monitoring and error tracking
-
-## 📈 Performance Considerations
-
-### Optimization Strategies
-- Debounced filter updates (300ms)
-- Memoized API calls with useMemo
-- Image lazy loading for movie posters
-- Virtualization for long lists (if needed)
-
-### Bundle Size Management
-- Code splitting with dynamic imports
-- Tree shaking for unused code
-- Bundle size monitoring
-
-## 🎨 Design System
-
-### Color Palette
-- Primary: `#d32f2f` (Red accents)
-- Background: `#f5f5f5` (Light gray)
-- Text: `#333333` (Dark gray)
-- Borders: `#e0e0e0` (Light gray)
-
-### Typography
-- System fonts with fallbacks
-- 8-step spacing scale
-- Responsive font sizes
-
-### Components
-- Consistent border radius (4px, 6px, 8px, 12px, 16px)
-- Shadow system for depth
-- Smooth transitions (0.2s ease)
-
-## 📱 Responsive Design
-
-### Breakpoints
-- Mobile: `< 640px` - 1 column
-- Small Tablet: `640px - 768px` - 2 columns
-- Tablet: `768px - 1024px` - 3 columns
-- Desktop: `1024px - 1280px` - 4 columns
-- Large Desktop: `> 1280px` - 5 columns
-
-### Mobile Optimizations
-- Full-width filter controls
-- Touch-friendly buttons
-- Optimized image sizes
-- Simplified navigation
-
-## 🔄 Next Steps
+## Next Steps
 
 To begin implementation:
 
-1. **Review the complete plan** - Read through all 6 documents
-2. **Set up development environment** - Ensure React app is running
-3. **Fix backend issues** - Address the country parameter issue
-4. **Start with Phase 1** - Create component structure and routing
-5. **Follow the detailed plans** - Use each document as a reference during implementation
-
-## 📞 Support
-
-For questions or clarifications during implementation:
-- Refer to the specific plan document for detailed guidance
-- Check the component structure for architectural decisions
-- Review API integration plan for backend requirements
-- Consult testing plan for quality assurance
-
----
-
-**Note**: This plan provides comprehensive guidance for building a production-ready movie filter page. Each document contains detailed implementation instructions, code examples, and best practices to ensure successful development.
+1. **Read 1-OVERVIEW.md** - Understand the current state and goals
+2. **Read 2-COMPONENT-STRUCTURE.md** - Understand component architecture
+3. **Start with Phase 1** - Set up folder structure and routes
+4. **Follow each phase** - Build components, add state management, style, test

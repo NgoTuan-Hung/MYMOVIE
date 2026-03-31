@@ -50,60 +50,71 @@ GET /movie/filter
 
 ### 1. Enhanced API Utility Functions
 
-**File**: `frontend/src/services/movieApi.js`
+**Note**: Extend the existing `myMovieApi.js` file instead of creating a new file.
+
+**File**: `frontend/src/test/myMovieApi.js` (extend existing)
 
 ```javascript
 const BASE_URL = "http://localhost:8080";
+const MOVIE_URL = `${BASE_URL}/movie`;
 
-export const movieApi = {
-  // Existing functions
-  fetchMovies: async () => {
+// Existing exports
+export { BASE_URL, MOVIE_URL };
+
+export async function fetchMovies() {
     const res = await fetch(`${BASE_URL}/movie`);
     return res.json();
-  },
+}
 
-  fetchHotMovies: async (limit = 10) => {
+export async function fetchHotMovies(limit = 10) {
     const res = await fetch(`${BASE_URL}/movie/hot?limit=${limit}`);
     return res.json();
-  },
+}
 
-  getPosterUrl: (fileName) => {
+export function getPosterUrl(fileName) {
     return `${BASE_URL}/test/image/${fileName}`;
-  },
+}
 
-  // New filter functions
-  fetchMoviesByFilter: async (filters, page = 0, limit = 10) => {
+export function getMovieUrl() {
+    return `${MOVIE_URL}`
+}
+
+// NEW: Filter function - used by BOTH /movie and /tv pages
+export async function fetchMoviesByFilter(filters = {}, page = 0, limit = 10) {
     const params = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString()
+        page: page.toString(),
+        limit: limit.toString()
     });
 
-    // Add filter parameters
+    // Add filter parameters only if they have values
     if (filters.sort) params.append('sort', filters.sort);
     if (filters.category) params.append('category', filters.category);
     if (filters.country) params.append('country', filters.country);
     if (filters.releaseYear) params.append('releaseYear', filters.releaseYear);
     if (filters.type) params.append('type', filters.type);
 
-    const res = await fetch(`${BASE_URL}/movie/filter?${params.toString()}`);
+    const res = await fetch(`${MOVIE_URL}/filter?${params.toString()}`);
     
     if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
+        throw new Error(`HTTP error! status: ${res.status}`);
     }
     
     return res.json();
-  },
+}
 
-  // Helper to get dropdown options
-  getFilterOptions: async () => {
-    // This would need a new backend endpoint or use existing data
-    // For now, we'll use static options or derive from existing data
-    return {
-      categories: ['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi'],
-      countries: ['US', 'UK', 'Japan', 'South Korea', 'France'],
-      releaseYears: ['2024', '2023', '2022', '2021', '2020']
-    };
-  }
+// Static filter options for dropdowns
+export const FILTER_OPTIONS = {
+    sort: [
+        { value: 'name', label: 'Name (A-Z)' },
+        { value: 'viewCount', label: 'Most Popular' }
+    ],
+    categories: ['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi', 'Romance', 'Thriller'],
+    countries: ['US', 'UK', 'Japan', 'South Korea', 'France', 'Germany', 'Canada'],
+    releaseYears: ['2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015'],
+    types: [
+        { value: 'movie', label: 'Movies' },
+        { value: 'series', label: 'TV Shows' }
+    ]
 };
 ```
 
@@ -113,16 +124,17 @@ export const movieApi = {
 
 ```javascript
 import { useState, useEffect, useCallback } from 'react';
-import { movieApi } from '../services/movieApi';
+import { fetchMoviesByFilter } from '../test/myMovieApi';
 
-export const useMovieFilter = (initialFilters = {}) => {
+// Hook for BOTH /movie and /tv pages
+// defaultType: "movie" for /movie page, "series" for /tv page
+export const useMovieFilter = (defaultType = 'movie') => {
   const [filters, setFilters] = useState({
     sort: '',
     category: '',
     country: '',
     releaseYear: '',
-    type: initialFilters.type || '',
-    ...initialFilters
+    type: defaultType  // Set from page route
   });
   
   const [movies, setMovies] = useState([]);
@@ -134,13 +146,13 @@ export const useMovieFilter = (initialFilters = {}) => {
     totalElements: 0
   });
 
-  // Debounced filter function
+  // Fetch movies with current filters
   const fetchMovies = useCallback(async (currentFilters, currentPage = 0) => {
     setLoading(true);
     setError(null);
     
     try {
-      const result = await movieApi.fetchMoviesByFilter(currentFilters, currentPage);
+      const result = await fetchMoviesByFilter(currentFilters, currentPage, 10);
       
       setMovies(result.content || []);
       setPagination({
@@ -156,7 +168,7 @@ export const useMovieFilter = (initialFilters = {}) => {
     }
   }, []);
 
-  // Initial fetch and filter changes
+  // Fetch when filters change
   useEffect(() => {
     fetchMovies(filters, 0);
   }, [filters, fetchMovies]);
@@ -174,9 +186,9 @@ export const useMovieFilter = (initialFilters = {}) => {
       category: '',
       country: '',
       releaseYear: '',
-      type: filters.type // Keep type from URL
+      type: defaultType // Reset to page default
     });
-  }, [filters.type]);
+  }, [defaultType]);
 
   const goToPage = useCallback((page) => {
     fetchMovies(filters, page);
