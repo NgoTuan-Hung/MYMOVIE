@@ -1,0 +1,60 @@
+.filter-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 24px;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: #666;
+}
+
+.error-container {
+    text-align: center;
+    padding: 40px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.error-message {
+    color: #d32f2f;
+    font-size: 16px;
+    margin-bottom: 16px;
+}
+
+.retry-button,
+.reset-button {
+    padding: 10px 24px;
+    background: #d32f2f;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.retry-button:hover,
+.reset-button:hover {
+    background: #b71c1c;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.empty-state p {
+    font-size: 18px;
+    margin-bottom: 16px;
+}

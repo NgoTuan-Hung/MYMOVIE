@@ -41,7 +41,7 @@ public class MovieController {
 
     @GetMapping("/filter")
     public Page<MovieResponse> getMovieByFilter(@RequestParam(required = false) String sort,
-            @RequestParam(required = false) String category, @RequestParam String country,
+            @RequestParam(required = false) String category, @RequestParam(required = false) String country,
             @RequestParam(required = false) String releaseYear, @RequestParam(required = false) String type,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit) {

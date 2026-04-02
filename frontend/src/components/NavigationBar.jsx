@@ -9,11 +9,13 @@ const navItems = [
     { label: "Genres", path: "/genres" },
 ];
 
-const handleSearch = (q) => {
-    navigate(`/movies?search=${q}`);
-};
-
 export default function NavigationBar() {
+
+    const navigate = useNavigate();
+
+    const handleSearch = (q) => {
+        navigate(`/movie?search=${q}`);
+    };
 
     return (
         <nav className="navbar">
