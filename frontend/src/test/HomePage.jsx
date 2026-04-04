@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { fetchMovies, fetchHotMovies, getPosterUrl } from "./myMovieApi";
-import { Link } from "react-router-dom";
+import { fetchMovies, fetchHotMovies } from "./myMovieApi";
+import MovieGrid from "../components/filter/MovieGrid";
+import "../styles/filter-page.css";
+import "../styles/movie-grid.css";
 
 export default function HomePage() {
     const [hotMovies, setHotMovies] = useState([]);
@@ -28,66 +30,28 @@ export default function HomePage() {
     }, []);
 
     if (loading) {
-        return <div style={{ textAlign: "center", padding: "50px" }}>Loading movies...</div>;
+        return <div className="loading">Loading movies...</div>;
     }
 
     return (
-        <div>
+        <div className="filter-page">
             {/* Hot Movies Section */}
             {hotMovies.length > 0 && (
-                <div style={{ marginBottom: "40px" }}>
-                    <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px", color: "#d32f2f" }}>
+                <section style={{ marginBottom: "40px" }}>
+                    <h2 className="page-title" style={{ color: "var(--accent)" }}>
                         🔥 Hot Movies
                     </h2>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "20px" }}>
-                        {hotMovies.map(movie => (
-                            <Link
-                                to={`/movie/${movie.id}`}
-                                key={movie.id}
-                                style={{ textDecoration: "none", color: "inherit" }}
-                            >
-                                <div style={{ border: "1px solid #ccc", padding: "10px", cursor: "pointer" }}>
-                                    <img
-                                        src={getPosterUrl(movie.posterUrl)}
-                                        alt={movie.displayName}
-                                        style={{ width: "100%", height: "300px", objectFit: "cover" }}
-                                    />
-                                    <h3 style={{ fontSize: "16px", marginTop: "10px", marginBottom: "5px" }}>{movie.displayName}</h3>
-                                    <p style={{ fontSize: "14px", color: "#666", margin: "0" }}>{movie.releaseYear}</p>
-                                    <p style={{ fontSize: "14px", color: "#666", margin: "0" }}>{movie.duration} min</p>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
+                    <MovieGrid movies={hotMovies} />
+                </section>
             )}
 
             {/* All Movies Section */}
-            <div>
-                <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
+            <section>
+                <h2 className="page-title">
                     🎬 All Movies
                 </h2>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "20px" }}>
-                    {allMovies.map(movie => (
-                        <Link
-                            to={`/movie/${movie.id}`}
-                            key={movie.id}
-                            style={{ textDecoration: "none", color: "inherit" }}
-                        >
-                            <div style={{ border: "1px solid #ccc", padding: "10px", cursor: "pointer" }}>
-                                <img
-                                    src={getPosterUrl(movie.posterUrl)}
-                                    alt={movie.displayName}
-                                    style={{ width: "100%", height: "300px", objectFit: "cover" }}
-                                />
-                                <h3 style={{ fontSize: "16px", marginTop: "10px", marginBottom: "5px" }}>{movie.displayName}</h3>
-                                <p style={{ fontSize: "14px", color: "#666", margin: "0" }}>{movie.releaseYear}</p>
-                                <p style={{ fontSize: "14px", color: "#666", margin: "0" }}>{movie.duration} min</p>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
-            </div>
+                <MovieGrid movies={allMovies} />
+            </section>
         </div>
     );
 }

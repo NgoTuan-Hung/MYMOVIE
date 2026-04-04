@@ -12,8 +12,7 @@ function App() {
         <main style={{ flex: 1, padding: "20px" }}>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/movie" element={<MovieFilterPage defaultType="movie" />} />
-            <Route path="/tv" element={<MovieFilterPage defaultType="series" />} />
+            <Route path="/movie" element={<MovieFilterPage />} />
             <Route path="/movie/:id" element={<MovieDetail />} />
           </Routes>
         </main>

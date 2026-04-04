@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MovieFilterRequest {
+    private String name;
     private String sort;
     private String category;
     private String country;

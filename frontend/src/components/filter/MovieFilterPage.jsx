@@ -4,7 +4,7 @@ import MovieGrid from "./MovieGrid";
 import Pagination from "./Pagination";
 import "../../styles/filter-page.css";
 
-export default function MovieFilterPage({ defaultType = "movie" }) {
+export default function MovieFilterPage() {
     const {
         filters,
         movies,
@@ -14,11 +14,9 @@ export default function MovieFilterPage({ defaultType = "movie" }) {
         updateFilter,
         resetFilters,
         goToPage
-    } = useMovieFilter(defaultType);
+    } = useMovieFilter();
 
-    const emptyMessage = defaultType === "movie"
-        ? "No movies found matching your filters"
-        : "No TV shows found matching your filters";
+    const emptyMessage = "No movies found matching your filters";
 
     return (
         <div className="filter-page">

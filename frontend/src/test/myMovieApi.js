@@ -22,14 +22,13 @@ export function getMovieUrl() {
     return `${MOVIE_URL}`
 }
 
-// NEW: Filter function - used by BOTH /movie and /tv pages
 export async function fetchMoviesByFilter(filters = {}, page = 0, limit = 10) {
     const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString()
     });
 
-    // Add filter parameters only if they have values
+    if (filters.name) params.append('name', filters.name);          // <-- NEW
     if (filters.sort) params.append('sort', filters.sort);
     if (filters.category) params.append('category', filters.category);
     if (filters.country) params.append('country', filters.country);

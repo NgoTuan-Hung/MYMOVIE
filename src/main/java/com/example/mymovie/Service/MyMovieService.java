@@ -86,9 +86,9 @@ public class MyMovieService implements MovieService {
     public Page<MovieResponse> getMovieByFilter(MovieFilterRequest req, int page, int limit) {
         Sort sort = Sort.unsorted();
 
-        if (req.getSort().equals("name")) {
+        if ("name".equals(req.getSort())) {
             sort = Sort.by("displayName").ascending();
-        } else if (req.getSort().equals("viewCount")) {
+        } else if ("viewCount".equals(req.getSort())) {
             sort = Sort.by("weeklyViews").descending();
         }
 

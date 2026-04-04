@@ -1,16 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { fetchMoviesByFilter } from '../test/myMovieApi';
 
-// Used by BOTH /movie and /tv pages
-// defaultType: "movie" for movies page, "series" for TV page
-export const useMovieFilter = (defaultType = 'movie') => {
+export const useMovieFilter = () => {
+    const [searchParams] = useSearchParams();
 
+    // Initialize filters from URL parameters
     const [filters, setFilters] = useState({
-        sort: '',
-        category: '',
-        country: '',
-        releaseYear: '',
-        type: defaultType
+        name: searchParams.get('name') || '',           // <-- NEW
+        sort: searchParams.get('sort') || '',
+        category: searchParams.get('category') || '',
+        country: searchParams.get('country') || '',
+        releaseYear: searchParams.get('releaseYear') || '',
+        type: searchParams.get('type') || ''
     });
 
     const [movies, setMovies] = useState([]);
@@ -22,18 +24,29 @@ export const useMovieFilter = (defaultType = 'movie') => {
         totalElements: 0
     });
 
+    // Sync filters when URL search params change
     useEffect(() => {
+        const name = searchParams.get('name') || '';            // <-- NEW
+        const sort = searchParams.get('sort') || '';
+        const category = searchParams.get('category') || '';
+        const country = searchParams.get('country') || '';
+        const releaseYear = searchParams.get('releaseYear') || '';
+        const type = searchParams.get('type') || '';
+
         setFilters(prev => {
-            // Only update if type actually changed
-            if (prev.type !== defaultType) {
-                return {
-                    ...prev,
-                    type: defaultType
-                };
+            if (
+                prev.name !== name ||                               // <-- NEW
+                prev.sort !== sort ||
+                prev.category !== category ||
+                prev.country !== country ||
+                prev.releaseYear !== releaseYear ||
+                prev.type !== type
+            ) {
+                return { name, sort, category, country, releaseYear, type };
             }
             return prev;
         });
-    }, [defaultType]);
+    }, [searchParams.toString()]);
 
     // Fetch movies from API
     const fetchMovies = useCallback(async (currentFilters, currentPage = 0) => {
@@ -73,13 +86,14 @@ export const useMovieFilter = (defaultType = 'movie') => {
     // Reset all filters to defaults
     const resetFilters = useCallback(() => {
         setFilters({
+            name: '',                                       // <-- NEW
             sort: '',
             category: '',
             country: '',
             releaseYear: '',
-            type: defaultType
+            type: ''
         });
-    }, [defaultType]);
+    }, []);
 
     // Go to specific page
     const goToPage = useCallback((page) => {

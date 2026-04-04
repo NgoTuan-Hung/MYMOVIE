@@ -12,6 +12,11 @@ public class MovieSpecification {
 
             var predicates = cb.conjunction();
 
+            if (request.getName() != null && !request.getName().isBlank()) {
+                String pattern = "%" + request.getName().toLowerCase() + "%";
+                predicates = cb.and(cb.like(cb.lower(root.get("displayName")), pattern));
+            }
+
             if (request.getCategory() != null) {
                 var join = root.join("categories");
                 predicates = cb.and(predicates, cb.equal(join.get("name"), request.getCategory()));
@@ -27,9 +32,9 @@ public class MovieSpecification {
             }
 
             if (request.getType() != null) {
-                if (request.getType().equals("movie")) {
+                if ("movie".equals(request.getType())) {
                     predicates = cb.and(predicates, cb.lt(root.get("episodeCount"), 2));
-                } else if (request.getType().equals("series")) {
+                } else if ("series".equals(request.getType())) {
                     predicates = cb.and(predicates, cb.gt(root.get("episodeCount"), 1));
                 }
             }
