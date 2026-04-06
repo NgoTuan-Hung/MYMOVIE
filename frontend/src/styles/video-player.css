@@ -1,0 +1,103 @@
+/* ============================================
+   Vidstack Player Custom Styles
+   Replaces video.js/vjs-* styles with vidstack equivalents
+   ============================================ */
+
+/* Player wrapper - maintains existing layout */
+.video-player-wrapper {
+    width: 100%;
+    position: relative;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Loading state */
+.player-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 16px;
+    z-index: 1;
+}
+
+/* ============================================
+   Vidstack Default Layout Customization
+   These override the default theme variables
+   ============================================ */
+
+/* Custom CSS variables for theming */
+:root {
+    --accent: #e50914;
+    --accent-hover: #ff0a16;
+}
+
+/* Override vidstack default colors with project theme */
+.media-player {
+    --media-brand: var(--accent, #e50914);
+    --media-brand-hover: var(--accent-hover, #ff0a16);
+}
+
+/* Customize the play button (centered, large) */
+.media-player .vds-play-button {
+    background: rgba(229, 9, 20, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+}
+
+.media-player .vds-play-button:hover {
+    background: rgba(229, 9, 20, 1);
+    transform: scale(1.1);
+}
+
+/* Progress bar styling */
+.media-player .vds-progress-bar {
+    --media-brand: var(--accent, #e50914);
+}
+
+.media-player .vds-progress-thumb {
+    background: var(--accent, #e50914);
+}
+
+/* Volume slider styling */
+.media-player .vds-volume-slider {
+    --media-brand: var(--accent, #e50914);
+}
+
+/* Control bar background */
+.media-player .vds-controls {
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+}
+
+/* Quality selector menu */
+.media-player .vds-menu-items {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+/* ============================================
+   No video message (kept from original)
+   ============================================ */
+.no-video-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: #999;
+    font-size: 18px;
+    background: #111;
+    border-radius: 8px;
+}
+
+/* ============================================
+   Responsive adjustments
+   ============================================ */
+@media (max-width: 768px) {
+    .media-player .vds-play-button {
+        width: 60px;
+        height: 60px;
+    }
+}

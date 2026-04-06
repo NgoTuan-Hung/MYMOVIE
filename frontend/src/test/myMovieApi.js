@@ -58,3 +58,12 @@ export const FILTER_OPTIONS = {
         { value: 'series', label: 'TV Shows' }
     ]
 };
+
+// TODO: Update endpoint when backend is ready
+export async function getMovieFiles(movieId) {
+    const res = await fetch(`${MOVIE_URL}/${movieId}/files`);
+    if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    return res.json();
+}

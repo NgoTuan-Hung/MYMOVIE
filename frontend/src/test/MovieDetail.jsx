@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getPosterUrl, MOVIE_URL } from "./myMovieApi";
+import { useNavigate } from "react-router-dom";
 
 export default function MovieDetail() {
     const { id } = useParams();
     const [movie, setMovie] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch(`${MOVIE_URL}/${id}`)
@@ -48,6 +50,15 @@ export default function MovieDetail() {
                     <p><strong>Categories:</strong> {movie.categories?.join(", ")}</p>
                     <p><strong>Countries:</strong> {movie.countries?.join(", ")}</p>
                     <p><strong>Languages:</strong> {movie.languages?.join(", ")}</p>
+                </div>
+
+                <div style={{ marginTop: "30px" }}>
+                    <button
+                        onClick={() => navigate(`/movie/${id}/watch`)}
+                        className="watch-button"
+                    >
+                        ▶ WATCH NOW
+                    </button>
                 </div>
             </div>
 
