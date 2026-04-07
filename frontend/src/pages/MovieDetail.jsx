@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getPosterUrl, MOVIE_URL } from "./myMovieApi";
+import { getPosterUrl, MOVIE_URL } from "../hooks/myMovieApi";
 import { useNavigate } from "react-router-dom";
 
 export default function MovieDetail() {
@@ -54,7 +54,7 @@ export default function MovieDetail() {
 
                 <div style={{ marginTop: "30px" }}>
                     <button
-                        onClick={() => navigate(`/movie/${id}/watch`)}
+                        onClick={() => navigate(`/movie/${id}/watch`, { state: { movie } })}
                         className="watch-button"
                     >
                         ▶ WATCH NOW

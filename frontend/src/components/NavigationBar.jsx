@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import DropdownMenu from "./DropdownMenu";
-import { FILTER_OPTIONS } from "../test/myMovieApi";
+import { FILTER_OPTIONS } from "../hooks/myMovieApi";
 import "../styles/navbar.css";
 import { Link } from "react-router-dom";
 

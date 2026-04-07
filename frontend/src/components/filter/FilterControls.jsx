@@ -1,4 +1,4 @@
-import { FILTER_OPTIONS } from "../../test/myMovieApi";
+import { FILTER_OPTIONS } from "../../hooks/myMovieApi";
 import "../../styles/filter-controls.css";
 
 export default function FilterControls({ filters, onFilterChange, onReset, loading }) {

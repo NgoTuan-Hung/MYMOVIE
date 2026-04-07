@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { fetchMovies, fetchHotMovies } from "./myMovieApi";
 import MovieGrid from "../components/filter/MovieGrid";
 import "../styles/filter-page.css";
 import "../styles/movie-grid.css";
+import { fetchHotMovies, fetchMovies } from "../hooks/myMovieApi";
 
 export default function HomePage() {
     const [hotMovies, setHotMovies] = useState([]);

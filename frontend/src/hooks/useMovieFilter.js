@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { fetchMoviesByFilter } from '../test/myMovieApi';
+import { fetchMoviesByFilter } from './myMovieApi';
 
 export const useMovieFilter = () => {
     const [searchParams] = useSearchParams();

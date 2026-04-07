@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { getPosterUrl } from "../../test/myMovieApi";
+import { getPosterUrl } from "../../hooks/myMovieApi";
 import "../../styles/movie-card.css";
 
 export default function MovieCard({ movie }) {

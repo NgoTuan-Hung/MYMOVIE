@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { MOVIE_URL } from "../test/myMovieApi";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { MOVIE_URL, getMovieFiles } from "../hooks/myMovieApi";
 import VideoPlayer from "../components/player/VideoPlayer";
 import "../styles/watch-page.css";
 
@@ -12,39 +12,51 @@ export default function MovieWatchPage() {
     const [selectedProvider, setSelectedProvider] = useState(null);
     const [currentVideoUrl, setCurrentVideoUrl] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Fetch movie details and files
+    const location = useLocation();
+    const passedMovie = location.state?.movie;
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const movieRes = await fetch(`${MOVIE_URL}/${id}`);
-                const movieData = await movieRes.json();
-                setMovie(movieData);
+                setLoading(true);
+                setError(null);
 
-                // TODO: Replace with actual endpoint when backend is ready
-                // const filesRes = await fetch(`${MOVIE_URL}/${id}/files`);
-                // const filesData = await filesRes.json();
-                // For now, use mock data
-                const mockFiles = generateMockFiles(movieData);
-                setFiles(mockFiles);
-                setLoading(false);
-            } catch (error) {
-                console.error("Error fetching movie data:", error);
+                // If movie was passed from MovieDetail, use it directly
+                if (passedMovie) {
+                    setMovie(passedMovie);
+                } else {
+                    // Otherwise, fetch from API (direct URL access, etc.)
+                    const movieRes = await fetch(`${MOVIE_URL}/${id}`);
+                    if (!movieRes.ok) throw new Error("Failed to fetch movie");
+                    const movieData = await movieRes.json();
+                    setMovie(movieData);
+                }
+
+                // Fetch movie files from backend
+                const movieFiles = await getMovieFiles(id);
+                setFiles(movieFiles);
+
+                // Set default provider if files exist
+                if (movieFiles.length > 0) {
+                    const allProviders = [...new Set(movieFiles.flatMap(f => f.sources.map(s => s.provider)))];
+                    if (allProviders.length > 0) {
+                        setSelectedProvider(allProviders[0]);
+                    }
+                }
+            } catch (err) {
+                console.error("Error fetching movie data:", err);
+                setError(err.message);
+            } finally {
                 setLoading(false);
             }
         };
         fetchData();
-    }, [id]);
+    }, [id, passedMovie]);
 
     // Extract unique providers from files
     const providers = [...new Set(files.flatMap(f => f.sources.map(s => s.provider)))];
-
-    // Default to first provider on load
-    useEffect(() => {
-        if (providers.length > 0 && !selectedProvider) {
-            setSelectedProvider(providers[0]);
-        }
-    }, [providers, selectedProvider]);
 
     // Load first episode when provider is selected
     useEffect(() => {
@@ -70,7 +82,9 @@ export default function MovieWatchPage() {
     };
 
     if (loading) return <div className="watch-loading">Loading...</div>;
+    if (error) return <div className="watch-error">Error: {error}</div>;
     if (!movie) return <div className="watch-error">Movie not found</div>;
+    if (files.length === 0) return <div className="watch-error">No episodes available</div>;
 
     return (
         <div className="watch-page">
@@ -123,21 +137,4 @@ export default function MovieWatchPage() {
             </div>
         </div>
     );
-}
-
-// TODO: Remove when backend is ready
-function generateMockFiles(movie) {
-    const episodeCount = movie.episodeCount || 1;
-    const files = [];
-    for (let i = 1; i <= episodeCount; i++) {
-        files.push({
-            episode: i,
-            title: `Episode ${i}`,
-            sources: [
-                { provider: "Provider 1", url: "https://pub-ba42193aff49498c847386e3958fe7aa.r2.dev/videos/Movie-1/output.m3u8" },
-                { provider: "Provider 2", url: "https://pub-ba42193aff49498c847386e3958fe7aa.r2.dev/videos/Movie-1/output.m3u8" }
-            ]
-        });
-    }
-    return files;
 }

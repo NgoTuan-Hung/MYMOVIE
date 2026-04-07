@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavigationBar from "./components/NavigationBar";
-import HomePage from "./test/HomePage";
-import MovieDetail from "./test/MovieDetail";
+import MovieDetail from "./pages/MovieDetail";
 import MovieFilterPage from "./components/filter/MovieFilterPage";
 import MovieWatchPage from "./pages/MovieWatchPage";
+import HomePage from "./pages/HomePage";
 
 function App() {
   return (
