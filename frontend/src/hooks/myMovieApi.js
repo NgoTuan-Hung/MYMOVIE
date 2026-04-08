@@ -1,21 +1,21 @@
 const BASE_URL = "http://localhost:8080";
-const MOVIE_URL = `${BASE_URL}/movie`;
+const MOVIE_URL = `${BASE_URL}/api/movie`;
 
 // Existing exports
 export { BASE_URL, MOVIE_URL };
 
 export async function fetchMovies() {
-    const res = await fetch(`${BASE_URL}/movie`);
+    const res = await fetch(`${MOVIE_URL}`);
     return res.json();
 }
 
 export async function fetchHotMovies(limit = 10) {
-    const res = await fetch(`${BASE_URL}/movie/hot?limit=${limit}`);
+    const res = await fetch(`${MOVIE_URL}/hot?limit=${limit}`);
     return res.json();
 }
 
 export function getPosterUrl(fileName) {
-    return `${BASE_URL}/test/image/${fileName}`;
+    return `${BASE_URL}/api/image/${fileName}`;
 }
 
 export function getMovieUrl() {

@@ -13,5 +13,9 @@ spring:
         multipart:
             max-file-size: 5MB
             max-request-size: 5MB
+
+jwt:
+    secret: "XzQ-LPYy2mORvtkPF+4W[5lKAYDdL,R^uuXmx7L6hm}"
+    expiration: 86400000
             
         

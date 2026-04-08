@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
-@RequestMapping("/test/image")
+@RequestMapping("/api/image")
 @AllArgsConstructor
 public class ImageController {
     private final StorageService storageService;

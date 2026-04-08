@@ -20,7 +20,7 @@ import com.example.mymovie.Service.MyMovieService;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/movie")
+@RequestMapping("/api/movie")
 @AllArgsConstructor
 public class MovieController {
     private final MyMovieService movieService;
