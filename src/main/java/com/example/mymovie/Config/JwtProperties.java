@@ -11,6 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class JwtProperties {
-    private String secretKey;
+    private String secret;
     private Long expiration;
 }

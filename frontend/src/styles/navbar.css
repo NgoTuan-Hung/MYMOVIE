@@ -321,3 +321,84 @@
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* ============================================
+   Auth Section in Navbar
+   ============================================ */
+.navbar-top-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.auth-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-auth-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.nav-auth-link:hover {
+    color: var(--accent);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-auth-button {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nav-auth-button:hover {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+/* ============================================
+   Responsive Auth Section
+   ============================================ */
+@media (max-width: 1024px) {
+    .navbar-top-right {
+        gap: 12px;
+    }
+
+    .nav-auth-link,
+    .nav-auth-button {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-top-right {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .auth-section {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .nav-auth-link,
+    .nav-auth-button {
+        flex: 1;
+        text-align: center;
+    }
+}

@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import DropdownMenu from "./DropdownMenu";
 import { FILTER_OPTIONS } from "../hooks/myMovieApi";
+import { useAuth } from "../context/AuthContext";
 import "../styles/navbar.css";
-import { Link } from "react-router-dom";
 
 const navItems = [
     { label: "Home", path: "/" },
@@ -14,6 +15,7 @@ const navItems = [
 
 export default function NavigationBar() {
     const navigate = useNavigate();
+    const { user, isAdmin, logout } = useAuth();
 
     const handleSearch = (q) => {
         navigate(`/movie?name=${encodeURIComponent(q)}`);
@@ -27,14 +29,39 @@ export default function NavigationBar() {
         navigate(`/movie?country=${encodeURIComponent(country)}`);
     };
 
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
+
     return (
         <header className="navbar-wrapper">
-            {/* Top Row: Logo + Search */}
+            {/* Top Row: Logo + Search + Auth */}
             <div className="navbar-top">
                 <Link to="/" className="logo">
                     🎬 MyMovie
                 </Link>
-                <SearchBar onSearch={handleSearch} />
+                <div className="navbar-top-right">
+                    <SearchBar onSearch={handleSearch} />
+                    <div className="auth-section">
+                        {user ? (
+                            <>
+                                {isAdmin() && (
+                                    <Link to="/admin" className="nav-auth-link">
+                                        🛡️ Admin
+                                    </Link>
+                                )}
+                                <button onClick={handleLogout} className="nav-auth-button">
+                                    Sign Out
+                                </button>
+                            </>
+                        ) : (
+                            <Link to="/login" className="nav-auth-link">
+                                Sign In
+                            </Link>
+                        )}
+                    </div>
+                </div>
             </div>
 
             {/* Bottom Row: Navigation Links + Dropdowns */}

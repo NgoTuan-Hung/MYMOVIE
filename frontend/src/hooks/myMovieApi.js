@@ -67,3 +67,53 @@ export async function getMovieFiles(movieId) {
     }
     return res.json();
 }
+
+export async function register(email, password) {
+    const res = await fetch(`${BASE_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+    });
+
+    if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Registration failed');
+    }
+
+    return res.json();
+}
+
+
+export async function login(email, password) {
+    const res = await fetch(`${BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+    });
+
+    if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Login failed');
+    }
+
+    return res.json();
+}
+
+export async function fetchAllUsers(token) {
+    const res = await fetch(`${BASE_URL}/api/admin/users`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+
+    if (!res.ok) {
+        throw new Error('Failed to fetch users');
+    }
+
+    return res.json();
+}
