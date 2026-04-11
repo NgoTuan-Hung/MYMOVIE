@@ -1,0 +1,171 @@
+.movie-list-container {
+    padding: 20px;
+}
+
+.movie-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.movie-list-header h2 {
+    margin: 0;
+    color: #333;
+}
+
+.add-movie-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.add-movie-btn:hover {
+    background: #218838;
+}
+
+.movie-table-wrapper {
+    overflow-x: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.movie-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.movie-table th,
+.movie-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.movie-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #555;
+}
+
+.movie-poster {
+    width: 60px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.no-poster {
+    width: 60px;
+    height: 90px;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #6c757d;
+    border-radius: 4px;
+}
+
+.movie-title {
+    font-weight: 500;
+    color: #333;
+}
+
+.movie-original {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-released {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-on_going {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-finish {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.actions-cell {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.update-btn {
+    background: #007bff;
+    color: white;
+}
+
+.file-btn {
+    background: #6c757d;
+    color: white;
+}
+
+.delete-btn {
+    background: #dc3545;
+    color: white;
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+}
+
+.pagination-info {
+    color: #6c757d;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pagination-controls button {
+    padding: 8px 16px;
+    border: 1px solid #dee2e6;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.pagination-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-number {
+    color: #333;
+    font-weight: 500;
+}

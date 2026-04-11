@@ -3,6 +3,7 @@ package com.example.mymovie.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,4 +33,13 @@ public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecific
 
     @EntityGraph(attributePaths = { "actors", "directors", "categories", "countries", "languages" })
     public Optional<Movie> findById(Long id);
+
+    // ==== NEW QUERY ====
+    @Query("SELECT m FROM Movie m WHERE m.id = :id")
+    Optional<Movie> findMovieByIdLazy(Long id);
+
+    // ==== FIXED: EntityGraph to avoid N+1 query ====
+    @EntityGraph(attributePaths = { "actors", "directors", "categories", "countries", "languages" })
+    @Query("SELECT m FROM Movie m")
+    Page<Movie> findAllWithAssociations(Pageable pageable);
 }

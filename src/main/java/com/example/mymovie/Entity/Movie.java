@@ -56,4 +56,7 @@ public class Movie {
     // getters, setters
     private String posterPath;
     private Integer weeklyViews;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<MovieFile> files;
 }
