@@ -229,3 +229,59 @@
         text-align: left;
     }
 }
+
+.admin-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+}
+
+.admin-tabs .tab {
+    padding: 14px 28px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.admin-tabs .tab::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: transparent;
+    transition: all 0.2s ease;
+}
+
+.admin-tabs .tab:hover {
+    color: var(--text-secondary);
+    background: var(--bg-input);
+}
+
+.admin-tabs .tab.active {
+    color: var(--accent);
+    background: var(--bg-card);
+}
+
+.admin-tabs .tab.active::after {
+    background: var(--accent);
+}
+
+/* Tab content area background */
+.admin-container>.admin-movie-list-container,
+.admin-container>.admin-dashboard {
+    background: var(--bg-secondary);
+    border-radius: 0 0 8px 8px;
+    border: 1px solid var(--border-color);
+    border-top: none;
+}

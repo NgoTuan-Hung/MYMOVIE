@@ -1,171 +1,265 @@
-.movie-list-container {
+/* ============================================
+   Admin Movie List Container
+   ============================================ */
+.admin-movie-list-container {
     padding: 20px;
 }
 
-.movie-list-header {
+.admin-movie-list-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
 }
 
-.movie-list-header h2 {
+.admin-movie-list-header h2 {
     margin: 0;
-    color: #333;
+    color: var(--text-primary);
 }
 
-.add-movie-btn {
-    background: #28a745;
+/* Add Movie Button — green accent, but dark-theme compatible */
+.admin-add-movie-btn {
+    background: #27ae60;
     color: white;
     border: none;
     padding: 10px 20px;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
-.add-movie-btn:hover {
-    background: #218838;
+.admin-add-movie-btn:hover {
+    background: #219a52;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
 }
 
-.movie-table-wrapper {
+/* ============================================
+   Table Wrapper & Table
+   ============================================ */
+.admin-table-wrapper {
     overflow-x: auto;
-    background: white;
+    background: var(--bg-card);
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
 }
 
-.movie-table {
+.admin-movie-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.movie-table th,
-.movie-table td {
+.admin-movie-table th,
+.admin-movie-table td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.movie-table th {
-    background: #f8f9fa;
+.admin-movie-table th {
+    background: var(--bg-input);
     font-weight: 600;
-    color: #555;
+    color: var(--text-primary);
+    position: sticky;
+    top: 0;
 }
 
-.movie-poster {
+.admin-movie-table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.admin-movie-table tbody tr:hover {
+    background: var(--bg-hover);
+}
+
+.admin-movie-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ============================================
+   Poster & No Poster
+   ============================================ */
+.admin-movie-poster {
     width: 60px;
     height: 90px;
     object-fit: cover;
     border-radius: 4px;
 }
 
-.no-poster {
+.admin-no-poster {
     width: 60px;
     height: 90px;
-    background: #e9ecef;
+    background: var(--bg-input);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 12px;
-    color: #6c757d;
+    color: var(--text-muted);
     border-radius: 4px;
+    border: 1px solid var(--border-color);
 }
 
-.movie-title {
+/* ============================================
+   Movie Title & Original Name
+   ============================================ */
+.admin-movie-title {
     font-weight: 500;
-    color: #333;
+    color: var(--text-primary);
 }
 
-.movie-original {
+.admin-movie-original {
     font-size: 12px;
-    color: #6c757d;
+    color: var(--text-muted);
 }
 
-.status-badge {
-    padding: 4px 8px;
+/* ============================================
+   Status Badges — dark-theme compatible
+   ============================================ */
+.admin-status-badge {
+    padding: 4px 10px;
     border-radius: 12px;
     font-size: 12px;
     font-weight: 500;
+    display: inline-block;
 }
 
-.status-released {
-    background: #d4edda;
-    color: #155724;
+.admin-status-released {
+    background: rgba(39, 174, 96, 0.15);
+    color: #2ecc71;
+    border: 1px solid rgba(39, 174, 96, 0.3);
 }
 
-.status-on_going {
-    background: #fff3cd;
-    color: #856404;
+.admin-status-on_going {
+    background: rgba(241, 196, 15, 0.15);
+    color: #f1c40f;
+    border: 1px solid rgba(241, 196, 15, 0.3);
 }
 
-.status-finish {
-    background: #d1ecf1;
-    color: #0c5460;
+.admin-status-finish {
+    background: rgba(52, 152, 219, 0.15);
+    color: #3498db;
+    border: 1px solid rgba(52, 152, 219, 0.3);
 }
 
-.actions-cell {
+/* ============================================
+   Action Buttons
+   ============================================ */
+.admin-actions-cell {
     display: flex;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
-.action-btn {
+.admin-action-btn {
     padding: 6px 12px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
-.update-btn {
-    background: #007bff;
+.admin-update-btn {
+    background: #2980b9;
     color: white;
 }
 
-.file-btn {
-    background: #6c757d;
+.admin-update-btn:hover {
+    background: #2471a3;
+    transform: translateY(-1px);
+}
+
+.admin-file-btn {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.admin-file-btn:hover {
+    background: var(--border-color);
+    transform: translateY(-1px);
+}
+
+.admin-delete-btn {
+    background: var(--accent);
     color: white;
 }
 
-.delete-btn {
-    background: #dc3545;
-    color: white;
+.admin-delete-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
 }
 
-.pagination {
+/* ============================================
+   Pagination — dark-theme compatible
+   ============================================ */
+.admin-pagination {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 20px;
-    padding: 12px;
-    background: white;
+    padding: 16px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
 }
 
-.pagination-info {
-    color: #6c757d;
+.admin-pagination-info {
+    color: var(--text-secondary);
+    font-size: 14px;
 }
 
-.pagination-controls {
+.admin-pagination-controls-wrapper {
     display: flex;
     align-items: center;
-    gap: 12px;
 }
 
-.pagination-controls button {
-    padding: 8px 16px;
-    border: 1px solid #dee2e6;
-    background: white;
-    border-radius: 4px;
-    cursor: pointer;
+/* Override the generic .pagination styles for admin context */
+.admin-pagination .pagination {
+    padding: 0;
 }
 
-.pagination-controls button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+/* ============================================
+   Loading & No Movies States
+   ============================================ */
+.loading,
+.no-movies {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    font-size: 16px;
 }
 
-.page-number {
-    color: #333;
-    font-weight: 500;
+.error-message {
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    color: #e74c3c;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 768px) {
+    .admin-movie-list-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .admin-actions-cell {
+        flex-direction: column;
+    }
+
+    .admin-pagination {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
 }

@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import { fetchAdminMovies, deleteMovie } from '../../hooks/adminApi';
 import MovieModal from './MovieModal';
+import AdminPagination from './AdminPagination';
 import '../../styles/movie-list.css';
 
-export default function MovieList() {
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
+export default function AdminMovieList() {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -78,11 +81,11 @@ export default function MovieList() {
     }
 
     return (
-        <div className="movie-list-container">
+        <div className="admin-movie-list-container">
             {/* Header with Add Button */}
-            <div className="movie-list-header">
+            <div className="admin-movie-list-header">
                 <h2>Movie Management</h2>
-                <button className="add-movie-btn" onClick={handleAdd}>
+                <button className="admin-add-movie-btn" onClick={handleAdd}>
                     + Add Movie
                 </button>
             </div>
@@ -91,13 +94,13 @@ export default function MovieList() {
             {error && <div className="error-message">{error}</div>}
 
             {/* Movie Table */}
-            <div className="movie-table-wrapper">
+            <div className="admin-table-wrapper">
                 {loading ? (
                     <div className="loading">Loading...</div>
                 ) : movies.length === 0 ? (
                     <div className="no-movies">No movies found</div>
                 ) : (
-                    <table className="movie-table">
+                    <table className="admin-movie-table">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -118,42 +121,42 @@ export default function MovieList() {
                                     <td>
                                         {movie.posterUrl ? (
                                             <img
-                                                src={`http://localhost:8080/api/image/${movie.posterUrl}`}
+                                                src={`${API_BASE_URL}/api/image/${movie.posterUrl}`}
                                                 alt={movie.displayName}
-                                                className="movie-poster"
+                                                className="admin-movie-poster"
                                             />
                                         ) : (
-                                            <div className="no-poster">No Image</div>
+                                            <div className="admin-no-poster">No Image</div>
                                         )}
                                     </td>
                                     <td>
-                                        <div className="movie-title">{movie.displayName}</div>
-                                        <div className="movie-original">{movie.originalName}</div>
+                                        <div className="admin-movie-title">{movie.displayName}</div>
+                                        <div className="admin-movie-original">{movie.originalName}</div>
                                     </td>
                                     <td>{movie.releaseYear || '-'}</td>
                                     <td>{movie.duration ? `${movie.duration} min` : '-'}</td>
                                     <td>
-                                        <span className={`status-badge status-${movie.status.toLowerCase()}`}>
+                                        <span className={`admin-status-badge admin-status-${movie.status.toLowerCase()}`}>
                                             {movie.status}
                                         </span>
                                     </td>
                                     <td>{movie.episodeCount || 1}</td>
                                     <td>{movie.weeklyViews || 0}</td>
-                                    <td className="actions-cell">
+                                    <td className="admin-actions-cell">
                                         <button
-                                            className="action-btn update-btn"
+                                            className="admin-action-btn admin-update-btn"
                                             onClick={() => handleEdit(movie)}
                                         >
                                             Update
                                         </button>
                                         <button
-                                            className="action-btn file-btn"
+                                            className="admin-action-btn admin-file-btn"
                                             onClick={() => handleFileClick(movie)}
                                         >
                                             File
                                         </button>
                                         <button
-                                            className="action-btn delete-btn"
+                                            className="admin-action-btn admin-delete-btn"
                                             onClick={() => handleDelete(movie.id)}
                                         >
                                             Delete
@@ -167,26 +170,12 @@ export default function MovieList() {
             </div>
 
             {/* Pagination */}
-            <div className="pagination">
-                <span className="pagination-info">
-                    Showing {page * size + 1} - {Math.min((page + 1) * size, totalElements)} of {totalElements}
-                </span>
-                <div className="pagination-controls">
-                    <button
-                        disabled={page === 0}
-                        onClick={() => handlePageChange(page - 1)}
-                    >
-                        Previous
-                    </button>
-                    <span className="page-number">Page {page + 1} of {totalPages}</span>
-                    <button
-                        disabled={page >= totalPages - 1}
-                        onClick={() => handlePageChange(page + 1)}
-                    >
-                        Next
-                    </button>
-                </div>
-            </div>
+            <AdminPagination
+                page={page}
+                totalPages={totalPages}
+                totalElements={totalElements}
+                onPageChange={handlePageChange}
+            />
 
             {/* Movie Modal */}
             {showModal && (
