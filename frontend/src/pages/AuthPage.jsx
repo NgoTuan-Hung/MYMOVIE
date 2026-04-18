@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { login as loginApi, register as registerApi } from '../hooks/myMovieApi';
 import '../styles/auth-page.css';
@@ -14,12 +14,16 @@ export default function AuthPage() {
 
     const { login } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Get the intended destination or default to home
+    const from = location.state?.from?.pathname || null;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
-        // Validation
+        // Validation (unchanged)
         if (!email || !password) {
             setError('Please fill in all fields');
             return;
@@ -47,8 +51,10 @@ export default function AuthPage() {
 
             login(response.token, response.role, email);
 
-            // Redirect based on role
-            if (response.role === 'ADMIN') {
+            // Redirect to intended page or default based on role
+            if (from) {
+                navigate(from, { replace: true });
+            } else if (response.role === 'ADMIN') {
                 navigate('/admin');
             } else {
                 navigate('/');

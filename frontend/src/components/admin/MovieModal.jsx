@@ -1,13 +1,30 @@
 
 import { useState, useEffect } from 'react';
 import { createMovie, updateMovie, getMovieById } from '../../hooks/adminApi';
+import {
+    fetchCountries,
+    fetchCategories,
+    fetchActors,
+    fetchDirectors,
+    fetchLanguages
+} from '../../hooks/adminApi';
 import '../../styles/movie-modal.css';
+import MultiSelectDropdown from '../MultiSelectDropdown';
 
 export default function MovieModal({ movie, onClose, onSaveSuccess }) {
     const isEdit = !!movie;
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [loadingRefs, setLoadingRefs] = useState(true);
 
+    // Reference data options
+    const [countries, setCountries] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [actors, setActors] = useState([]);
+    const [directors, setDirectors] = useState([]);
+    const [languages, setLanguages] = useState([]);
+
+    // Form state
     const [formData, setFormData] = useState({
         originalName: '',
         displayName: '',
@@ -16,7 +33,17 @@ export default function MovieModal({ movie, onClose, onSaveSuccess }) {
         status: 'RELEASED',
         episodeCount: 1,
         posterPath: '',
+        countryIds: [],
+        categoryIds: [],
+        actorIds: [],
+        directorIds: [],
+        languageIds: [],
     });
+
+    // Load reference data once on mount
+    useEffect(() => {
+        loadReferenceData();
+    }, []);
 
     // Load movie data for edit mode
     useEffect(() => {
@@ -24,6 +51,27 @@ export default function MovieModal({ movie, onClose, onSaveSuccess }) {
             loadMovieData();
         }
     }, [movie]);
+
+    async function loadReferenceData() {
+        try {
+            const [c, cat, a, d, l] = await Promise.all([
+                fetchCountries(),
+                fetchCategories(),
+                fetchActors(),
+                fetchDirectors(),
+                fetchLanguages()
+            ]);
+            setCountries(c);
+            setCategories(cat);
+            setActors(a);
+            setDirectors(d);
+            setLanguages(l);
+        } catch (err) {
+            console.error('Failed to load reference data:', err);
+        } finally {
+            setLoadingRefs(false);
+        }
+    }
 
     async function loadMovieData() {
         try {
@@ -36,6 +84,11 @@ export default function MovieModal({ movie, onClose, onSaveSuccess }) {
                 status: data.status || 'RELEASED',
                 episodeCount: data.episodeCount || 1,
                 posterPath: data.posterUrl || '',
+                countryIds: data.countryIds || [],
+                categoryIds: data.categoryIds || [],
+                actorIds: data.actorIds || [],
+                directorIds: data.directorIds || [],
+                languageIds: data.languageIds || [],
             });
         } catch (err) {
             setError(err.message);
@@ -49,6 +102,13 @@ export default function MovieModal({ movie, onClose, onSaveSuccess }) {
             [name]: name === 'episodeCount' || name === 'releaseYear' || name === 'duration'
                 ? (value ? parseInt(value) : '')
                 : value
+        }));
+    }
+
+    function handleSelectionChange(field, selectedIds) {
+        setFormData(prev => ({
+            ...prev,
+            [field]: selectedIds
         }));
     }
 
@@ -79,41 +139,50 @@ export default function MovieModal({ movie, onClose, onSaveSuccess }) {
         }
     }
 
+    if (loadingRefs) {
+        return (
+            <div className="modal-overlay" onClick={onClose}>
+                <div className="modal-content" onClick={e => e.stopPropagation()}>
+                    <div className="loading">Loading reference data...</div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-content modal-content-wide" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
                     <h2>{isEdit ? 'Edit Movie' : 'Add New Movie'}</h2>
                     <button className="close-btn" onClick={onClose}>&times;</button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="movie-form">
+                <form onSubmit={handleSubmit} className="movie-form movie-form-grid">
                     {error && <div className="form-error">{error}</div>}
 
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label htmlFor="originalName">Original Name *</label>
-                            <input
-                                type="text"
-                                id="originalName"
-                                name="originalName"
-                                value={formData.originalName}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
+                    {/* Basic Info */}
+                    <div className="form-group">
+                        <label htmlFor="originalName">Original Name *</label>
+                        <input
+                            type="text"
+                            id="originalName"
+                            name="originalName"
+                            value={formData.originalName}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
 
-                        <div className="form-group">
-                            <label htmlFor="displayName">Display Name *</label>
-                            <input
-                                type="text"
-                                id="displayName"
-                                name="displayName"
-                                value={formData.displayName}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
+                    <div className="form-group">
+                        <label htmlFor="displayName">Display Name *</label>
+                        <input
+                            type="text"
+                            id="displayName"
+                            name="displayName"
+                            value={formData.displayName}
+                            onChange={handleChange}
+                            required
+                        />
                     </div>
 
                     <div className="form-row">
@@ -172,7 +241,53 @@ export default function MovieModal({ movie, onClose, onSaveSuccess }) {
                         </div>
                     </div>
 
-                    <div className="form-group">
+                    {/* Multi-select fields */}
+                    <MultiSelectDropdown
+                        label="Countries"
+                        options={countries}
+                        selectedIds={formData.countryIds}
+                        onChange={(ids) => handleSelectionChange('countryIds', ids)}
+                        placeholder="Select countries"
+                        searchable
+                    />
+
+                    <MultiSelectDropdown
+                        label="Categories"
+                        options={categories}
+                        selectedIds={formData.categoryIds}
+                        onChange={(ids) => handleSelectionChange('categoryIds', ids)}
+                        placeholder="Select categories"
+                        searchable
+                    />
+
+                    <MultiSelectDropdown
+                        label="Actors"
+                        options={actors}
+                        selectedIds={formData.actorIds}
+                        onChange={(ids) => handleSelectionChange('actorIds', ids)}
+                        placeholder="Select actors"
+                        searchable
+                    />
+
+                    <MultiSelectDropdown
+                        label="Directors"
+                        options={directors}
+                        selectedIds={formData.directorIds}
+                        onChange={(ids) => handleSelectionChange('directorIds', ids)}
+                        placeholder="Select directors"
+                        searchable
+                    />
+
+                    <MultiSelectDropdown
+                        label="Languages"
+                        options={languages}
+                        selectedIds={formData.languageIds}
+                        onChange={(ids) => handleSelectionChange('languageIds', ids)}
+                        placeholder="Select languages"
+                        searchable
+                    />
+
+                    <div className="form-group full-width">
                         <label htmlFor="posterPath">Poster Path</label>
                         <input
                             type="text"

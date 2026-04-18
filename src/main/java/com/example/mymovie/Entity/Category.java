@@ -2,6 +2,8 @@ package com.example.mymovie.Entity;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,15 +22,16 @@ import lombok.Setter;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private String name;
 
     @ManyToMany(mappedBy = "categories")
+    @JsonIgnore
     private Set<Movie> movies;
 
     // Parameterized constructor for DataSeeder
-    public Category(Long id, String name) {
+    public Category(Integer id, String name) {
         this.id = id;
         this.name = name;
     }

@@ -2,6 +2,8 @@ package com.example.mymovie.Entity;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +27,7 @@ public class Director {
     private String name;
 
     @ManyToMany(mappedBy = "directors")
+    @JsonIgnore
     private Set<Movie> movies;
 
     // Parameterized constructor for DataSeeder

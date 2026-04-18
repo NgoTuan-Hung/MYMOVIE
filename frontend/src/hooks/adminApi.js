@@ -59,3 +59,33 @@ export async function deleteMovie(id) {
     });
     if (!res.ok) throw new Error('Failed to delete movie');
 }
+
+export async function fetchCountries() {
+    const res = await fetch(`${ADMIN_API}/countries`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch countries');
+    return res.json();
+}
+
+export async function fetchCategories() {
+    const res = await fetch(`${ADMIN_API}/categories`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch categories');
+    return res.json();
+}
+
+export async function fetchActors() {
+    const res = await fetch(`${ADMIN_API}/actors`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch actors');
+    return res.json();
+}
+
+export async function fetchDirectors() {
+    const res = await fetch(`${ADMIN_API}/directors`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch directors');
+    return res.json();
+}
+
+export async function fetchLanguages() {
+    const res = await fetch(`${ADMIN_API}/languages`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch languages');
+    return res.json();
+}

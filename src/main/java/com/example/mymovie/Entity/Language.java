@@ -2,6 +2,8 @@ package com.example.mymovie.Entity;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,15 +22,16 @@ import lombok.Setter;
 public class Language {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private String name;
 
     @ManyToMany(mappedBy = "languages")
+    @JsonIgnore
     private Set<Movie> movies;
 
     // Parameterized constructor for DataSeeder
-    public Language(Long id, String name) {
+    public Language(Integer id, String name) {
         this.id = id;
         this.name = name;
     }

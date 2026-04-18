@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/admin-page.css';
 import AdminDashboard from '../components/admin/AdminDashboard';
 import AdminMovieList from '../components/admin/AdminMovieList';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminPage() {
-    const { user, isAdmin, logout } = useAuth();
+    const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [stats, setStats] = useState({
         totalMovies: 0,
@@ -14,13 +14,6 @@ export default function AdminPage() {
         totalViews: 0,
     });
     const [activeTab, setActiveTab] = useState('dashboard');
-
-    useEffect(() => {
-        // Redirect if not admin
-        if (!isAdmin()) {
-            navigate('/login');
-        }
-    }, [isAdmin, navigate]);
 
     const handleLogout = () => {
         logout();
@@ -37,9 +30,7 @@ export default function AdminPage() {
         });
     }, []);
 
-    if (!isAdmin()) {
-        return null;
-    }
+    // No need to check isAdmin here - ProtectedRoute handles it
 
     return (
         <div className="admin-container">

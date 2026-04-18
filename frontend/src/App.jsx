@@ -6,6 +6,7 @@ import MovieWatchPage from "./pages/MovieWatchPage";
 import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import AdminPage from "./pages/AdminPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 
 function App() {
@@ -18,7 +19,14 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<AuthPage />} />
-              <Route path="/admin" element={<AdminPage />} />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute requiredRoles={['ADMIN']}>
+                    <AdminPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/movie" element={<MovieFilterPage />} />
               <Route path="/movie/:id" element={<MovieDetail />} />
               <Route path="/movie/:id/watch" element={<MovieWatchPage />} />

@@ -4,7 +4,7 @@ import "../styles/navbar.css";
 export default function DropdownMenu({ triggerLabel, items, onItemClick, ariaLabel }) {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
-    let closeTimeoutRef = useRef(null);
+    const closeTimeoutRef = useRef(null);
 
     const handleMouseEnter = () => {
         clearTimeout(closeTimeoutRef.current);

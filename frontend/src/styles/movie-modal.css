@@ -4,114 +4,199 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    backdrop-filter: blur(2px);
 }
 
 .modal-content {
-    background: white;
-    border-radius: 8px;
+    background: var(--bg-card);
+    border-radius: 12px;
     width: 90%;
-    max-width: 600px;
+    max-width: 800px;
+    /* Wider for multi-select */
     max-height: 90vh;
     overflow-y: auto;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border-color);
+}
+
+.modal-content-wide {
+    max-width: 900px;
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
-    border-bottom: 1px solid #eee;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    background: var(--bg-card);
+    z-index: 10;
 }
 
 .modal-header h2 {
     margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 .close-btn {
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 28px;
     cursor: pointer;
-    color: #6c757d;
+    color: var(--text-muted);
+    line-height: 1;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
 }
 
+.close-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+}
+
+/* Form Grid Layout */
 .movie-form {
-    padding: 20px;
+    padding: 24px;
 }
 
-.form-row {
-    display: flex;
-    gap: 20px;
+.movie-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
 }
 
-.form-row .form-group {
-    flex: 1;
+.movie-form-grid .form-group.full-width {
+    grid-column: span 2;
+}
+
+@media (max-width: 768px) {
+    .movie-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .movie-form-grid .form-group.full-width {
+        grid-column: span 1;
+    }
 }
 
 .form-group {
-    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
 }
 
 .form-group label {
-    display: block;
-    margin-bottom: 6px;
+    font-size: 13px;
     font-weight: 500;
-    color: #333;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .form-group input,
 .form-group select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
     font-size: 14px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.15);
+}
+
+.form-group input::placeholder {
+    color: var(--text-muted);
+}
+
+/* Form row for two inputs side-by-side inside single group? Actually we use grid now */
+.form-row {
+    display: contents;
+    /* Let grid handle layout */
+}
+
+/* Error */
 .form-error {
-    background: #f8d7da;
-    color: #721c24;
-    padding: 12px;
-    border-radius: 4px;
-    margin-bottom: 16px;
+    grid-column: 1 / -1;
+    background: rgba(231, 76, 60, 0.12);
+    color: #e74c3c;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    border: 1px solid rgba(231, 76, 60, 0.25);
 }
 
 .form-actions {
+    grid-column: 1 / -1;
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    margin-top: 20px;
+    margin-top: 8px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.cancel-btn,
+.submit-btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .cancel-btn {
-    padding: 10px 20px;
-    border: 1px solid #dee2e6;
-    background: white;
-    border-radius: 4px;
-    cursor: pointer;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.cancel-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--text-muted);
 }
 
 .submit-btn {
-    padding: 10px 20px;
+    background: var(--accent);
     border: none;
-    background: #28a745;
     color: white;
-    border-radius: 4px;
-    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.3);
 }
 
 .submit-btn:disabled {
-    opacity: 0.5;
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
-.loading,
-.no-movies {
+.loading {
+    grid-column: 1 / -1;
     text-align: center;
     padding: 40px;
-    color: #6c757d;
+    color: var(--text-muted);
+    font-size: 16px;
 }
